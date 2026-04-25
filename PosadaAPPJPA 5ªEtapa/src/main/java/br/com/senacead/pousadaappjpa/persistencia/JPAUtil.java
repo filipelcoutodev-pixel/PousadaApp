@@ -13,12 +13,13 @@ public class JPAUtil {
     private static EntityManagerFactory fabrica;
 
     //cria a entidade se estiver nula e a retorna
- public static EntityManager getEntityManager() {
-    if(fabrica == null || !fabrica.isOpen())
-        fabrica = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
-    
-    return fabrica.createEntityManager(); // sem usar 'em' estático
-}
+    public static EntityManager getEntityManager() {
+        if (fabrica == null || !fabrica.isOpen()) {
+            fabrica = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+        }
+
+        return fabrica.createEntityManager(); // sem usar 'em' estático
+    }
 
     //fecha o EntityManager e o factory
     public static void closeEntityManager() {
