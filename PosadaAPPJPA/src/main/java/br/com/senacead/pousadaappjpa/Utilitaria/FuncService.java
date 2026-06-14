@@ -8,11 +8,13 @@ import br.com.senacead.pousadaappjpa.dao.CaixaDAO;
 import br.com.senacead.pousadaappjpa.dao.GastosDAO;
 import br.com.senacead.pousadaappjpa.dao.HospedeDAO;
 import br.com.senacead.pousadaappjpa.dao.QuartoDAO;
+import br.com.senacead.pousadaappjpa.dao.ReservaDAO;
 import br.com.senacead.pousadaappjpa.dao.UsuarioDAO;
 import br.com.senacead.pousadaappjpa.persistencia.Caixa;
 import br.com.senacead.pousadaappjpa.persistencia.Gastos;
 import br.com.senacead.pousadaappjpa.persistencia.Hospede;
 import br.com.senacead.pousadaappjpa.persistencia.Quarto;
+import br.com.senacead.pousadaappjpa.persistencia.Reserva;
 import br.com.senacead.pousadaappjpa.persistencia.Usuario;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class FuncService {
     private final GastosDAO gastoDAO = new GastosDAO();
     private final CaixaDAO caixaDAO = new CaixaDAO();
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private ReservaDAO reservaDAO = new ReservaDAO();
 
     //* Métodos para Hóspedes *//
     // Método para Cadastrar Hóspede
@@ -165,5 +168,28 @@ public List<Quarto> listarQuartos(){
     // Método para Listar usuários 
     public List<Usuario> listarUsuarios(String filtro) {
         return usuarioDAO.listar(filtro);
+    }
+    
+    //* Métodos para Reservas da Web *//
+    
+    // Lista todas as reservas para jogar na JTable
+    public List<Reserva> listarReservasWeb() {
+        return reservaDAO.listarTodas();
+    }
+
+    // Aprova a reserva mudando o status no banco
+    public void aprovarReservaWeb(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para aprovação.");
+        }
+        reservaDAO.aprovar(id);
+    }
+
+    // Exclui a reserva caso passe o prazo do sinal
+    public boolean excluirReservaWeb(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido para exclusão.");
+        }
+        return reservaDAO.excluir(id);
     }
 }

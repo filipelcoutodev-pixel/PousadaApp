@@ -9,6 +9,7 @@ import br.com.senacead.pousadaappjpa.persistencia.Hospede;
 import br.com.senacead.pousadaappjpa.dao.HospedeDAO;
 import br.com.senacead.pousadaappjpa.estrutura.Relatorio;
 import br.com.senacead.pousadaappjpa.Utilitaria.FuncService;
+import br.com.senacead.pousadaappjpa.gui.TelaReservas;
 import br.com.senacead.pousadaappjpa.persistencia.Quarto;
 import java.awt.Component;
 
@@ -203,6 +204,7 @@ public class TelaInicio2 extends javax.swing.JFrame {
         btnCaixa = new javax.swing.JButton();
         btnVoltar = new javax.swing.JButton();
         btnBusca = new javax.swing.JButton();
+        btnReservas = new javax.swing.JButton();
         PainelCaixa = new javax.swing.JPanel();
         lblData = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -393,6 +395,7 @@ public class TelaInicio2 extends javax.swing.JFrame {
         btnCaixa.setText("Caixa");
         btnCaixa.setToolTipText("Alt+C");
         btnCaixa.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 102, 153)));
+        btnCaixa.setEnabled(false);
         btnCaixa.setPreferredSize(new java.awt.Dimension(80, 40));
         btnCaixa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -422,6 +425,19 @@ public class TelaInicio2 extends javax.swing.JFrame {
             }
         });
 
+        btnReservas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnReservas.setForeground(new java.awt.Color(0, 102, 153));
+        btnReservas.setText("Reservas");
+        btnReservas.setToolTipText("Alt+C");
+        btnReservas.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 102, 153)));
+        btnReservas.setEnabled(false);
+        btnReservas.setPreferredSize(new java.awt.Dimension(80, 40));
+        btnReservas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReservasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PainelBotoesLayout = new javax.swing.GroupLayout(PainelBotoes);
         PainelBotoes.setLayout(PainelBotoesLayout);
         PainelBotoesLayout.setHorizontalGroup(
@@ -429,28 +445,33 @@ public class TelaInicio2 extends javax.swing.JFrame {
             .addGroup(PainelBotoesLayout.createSequentialGroup()
                 .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PainelBotoesLayout.createSequentialGroup()
-                        .addGap(44, 44, 44)
+                        .addGap(18, 18, 18)
                         .addComponent(btnCdastro, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
+                        .addGap(18, 18, 18)
                         .addComponent(btnGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(43, 43, 43)
+                        .addGap(18, 18, 18)
                         .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(PainelBotoesLayout.createSequentialGroup()
                         .addGap(439, 439, 439)
                         .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         PainelBotoesLayout.setVerticalGroup(
             PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PainelBotoesLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCdastro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCdastro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(12, 12, 12)
                 .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1335,6 +1356,11 @@ public class TelaInicio2 extends javax.swing.JFrame {
         atualizarTabelaHospede(lista);
     }//GEN-LAST:event_btnAtualizaTabelaActionPerformed
 
+    private void btnReservasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservasActionPerformed
+        TelaReservas reservas = new TelaReservas();
+        reservas.setVisible(true);
+    }//GEN-LAST:event_btnReservasActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1392,6 +1418,7 @@ public class TelaInicio2 extends javax.swing.JFrame {
     private javax.swing.JButton btnOkExclui;
     private javax.swing.JButton btnRelatorioCompleto;
     private javax.swing.JButton btnRelatorioResumido;
+    private javax.swing.JButton btnReservas;
     private javax.swing.JButton btnSairCadastro;
     private javax.swing.JButton btnSairCaixa;
     private javax.swing.JButton btnSairGastos;

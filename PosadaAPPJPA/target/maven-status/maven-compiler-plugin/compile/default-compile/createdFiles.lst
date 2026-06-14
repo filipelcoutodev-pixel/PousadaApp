@@ -9,6 +9,7 @@ br\com\senacead\pousadaappjpa\gui\Login$1.class
 pousadaapp\TelaInicio$8.class
 pousadaapp\TelaInicio$17.class
 br\com\senacead\pousadaappjpa\gui\DadosHospede$1.class
+br\com\senacead\pousadaappjpa\gui\TelaReservas$4.class
 pousadaapp\TelaInicio$10.class
 pousadaapp\TelaInicio$20.class
 pousadaapp\TelaInicio2$15.class
@@ -17,12 +18,15 @@ pousadaapp\TelaInicio2$12.class
 pousadaapp\TelaInicio2$22.class
 br\com\senacead\pousadaappjpa\persistencia\Criptografia.class
 pousadaapp\TelaInicio$19.class
+pousadaapp\TelaInicio$24.class
 br\com\senacead\pousadaappjpa\dao\QuartoDAO.class
 pousadaapp\TelaInicio2$5.class
+br\com\senacead\pousadaappjpa\gui\TelaReservas.class
 br\com\senacead\pousadaappjpa\PousadaAPPJPA.class
 pousadaapp\TelaInicio2$14.class
 pousadaapp\TelaInicio2$2.class
 br\com\senacead\pousadaappjpa\Utilitaria\JPAUtil.class
+br\com\senacead\pousadaappjpa\gui\TelaReservas$3.class
 br\com\senacead\pousadaappjpa\persistencia\Hospede.class
 pousadaapp\TelaInicio2$9.class
 pousadaapp\TelaInicio$16.class
@@ -30,6 +34,7 @@ br\com\senacead\pousadaappjpa\dao\GastosDAO.class
 br\com\senacead\pousadaappjpa\persistencia\Usuario.class
 pousadaapp\TelaInicio$1.class
 pousadaapp\TelaInicio$7.class
+br\com\senacead\pousadaappjpa\persistencia\Reserva.class
 br\com\senacead\pousadaappjpa\gui\Login.class
 pousadaapp\TelaInicio2$11.class
 br\com\senacead\pousadaappjpa\gui\Login$2.class
@@ -43,12 +48,15 @@ pousadaapp\TelaInicio2$1.class
 pousadaapp\TelaInicio$6.class
 br\com\senacead\pousadaappjpa\dao\HospedeDAO.class
 br\com\senacead\pousadaappjpa\estrutura\Relatorio.class
+br\com\senacead\pousadaappjpa\gui\TelaReservas$5.class
 pousadaapp\TelaInicio$18.class
 pousadaapp\TelaInicio$2.class
 br\com\senacead\pousadaappjpa\teste\CaixaTeste.class
 pousadaapp\TelaInicio2$10.class
 pousadaapp\TelaInicio2$20.class
 br\com\senacead\pousadaappjpa\persistencia\Quarto.class
+br\com\senacead\pousadaappjpa\gui\TelaReservas$2.class
+br\com\senacead\pousadaappjpa\dao\ReservaDAO.class
 pousadaapp\TelaInicio$12.class
 pousadaapp\TelaInicio2$17.class
 br\com\senacead\pousadaappjpa\gui\Login$6.class
@@ -66,7 +74,9 @@ pousadaapp\TelaInicio$5.class
 br\com\senacead\pousadaappjpa\teste\HospedeTeste.class
 pousadaapp\TelaInicio$22.class
 br\com\senacead\pousadaappjpa\gui\DadosHospede$2.class
+pousadaapp\TelaInicio2$24.class
 br\com\senacead\pousadaappjpa\persistencia\Gastos.class
+br\com\senacead\pousadaappjpa\gui\TelaReservas$1.class
 pousadaapp\TelaInicio2$16.class
 br\com\senacead\pousadaappjpa\Utilitaria\FuncService.class
 pousadaapp\TelaInicio2$21.class

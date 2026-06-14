@@ -6,6 +6,7 @@
       <persistence-unit name="pousadaappjpa">
           <class>br.com.senacead.pousadaappjpa.persistencia.Usuario</class>
           <class>br.com.senacead.pousadaappjpa.persistencia.Hospede</class>
+          <class>br.com.senacead.pousadaappjpa.persistencia.Reserva</class>
           <class>br.com.senacead.pousadaappjpa.persistencia.Gastos</class>  
           <class>br.com.senacead.pousadaappjpa.persistencia.Quarto</class> 
           
@@ -13,7 +14,7 @@
           <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
           <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost/PousadaAppJPA2" />
           <property name="jakarta.persistence.jdbc.user" value="root" />
-          <property name="jakarta.persistence.jdbc.password" value="root" />
+          <property name="jakarta.persistence.jdbc.password" value="flcadm" />
         
           <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 

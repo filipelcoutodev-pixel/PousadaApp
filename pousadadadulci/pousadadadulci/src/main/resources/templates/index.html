@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns="http://w3.org" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pousada da Dulci</title>
+   <link rel="stylesheet" th:href="@{/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+<header>
+     <img src="logo.png" class="img-fluid w-100" alt="Pousada da Dulci">
+</header>
+
+<body>
+    <!-- Header com logo -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Poussada da Dulci</a>
+        </div>
+    </nav>
+
+    <!-- Seção destaque -->
+    <section class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1>Uma Pousada simples e aconchegante em um ambiente familiar</h1>
+                <p>Preços acessiveis para vc, sua familia ou excursão.</p>
+                <a href="#quartos" class="btn btn-primary">Conhecer</a>
+            </div>
+            <div class="col-md-6">
+                <img src="fachada.png" class="img-fluid rounded" alt="Imagem da Pousada">
+            </div>
+        </div>
+    </section>
+
+    <!-- Vantagens -->
+    <section class="bg-light py-5">
+        <div class="container text-center">
+            <h2>O que Oferecemos aos Hospédes?</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h4>☕ Delicioso café da manhã com pão, frutas, bolo, e frios </h4>
+                    <p>Incluso em todas as diárias</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>📍 Ótima Localização</h4>
+                    <p>A 600 Metros do principal ponto Turístico da Cidade.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+          <!-- Quartos de 2 em 2 -->
+    <section id="quartos" class="container py-5">
+        <h2 class="text-center mb-4">Nossos Quartos</h2>
+        <h3 class="text-center text-muted mb-4">Clique na foto para ampliar na mesma tela</h3>
+        <div class="row g-4">
+            
+            <!-- Quarto 1A -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-1a">
+                        <img th:src="@{/Quarto1A.png}" class="card-img-top" alt="Quarto 1 Foto A" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 1 (Cama De casal e 1 Beliche)</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Quarto 1B -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-1b">
+                        <img th:src="@{/Quarto1B.png}" class="card-img-top" alt="Quarto 1 Foto B" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 1</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quarto 2A -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-2a">
+                        <img th:src="@{/Quarto2A.png}" class="card-img-top" alt="Quarto 2 Foto A" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 2 (Três Beliches)</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Quarto 2B -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-2b">
+                        <img th:src="@{/Quarto2B.png}" class="card-img-top" alt="Quarto 2 Foto B" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 2</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quarto 3A -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-3a">
+                        <img th:src="@{/Quarto3A.png}" class="card-img-top" alt="Quarto 3 Foto A" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 3 (Uma Cama de Casal, Um Beliche e Uma cama de Solteiro)</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Quarto 3B -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-3b">
+                        <img th:src="@{/Quarto3B.png}" class="card-img-top" alt="Quarto 3 Foto B" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 3</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quarto 4A -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-4a">
+                        <img th:src="@{/Quarto4A.png}" class="card-img-top" alt="Quarto 4 Foto A" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 4 (Quarto para Excursões)</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Quarto 4B -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <a href="#zoom-4b">
+                        <img th:src="@{/Quarto4B.png}" class="card-img-top" alt="Quarto 4 Foto B" style="cursor: pointer;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">Quarto 4</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CAIXAS ESCONDIDAS DE TELA CHEIA (Adicione isso logo abaixo da section quartos) -->
+    <div id="zoom-1a" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto1A.png}"></div>
+    <div id="zoom-1b" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto1B.png}"></div>
+    <div id="zoom-2a" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto2A.png}"></div>
+    <div id="zoom-2b" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto2B.png}"></div>
+    <div id="zoom-3a" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto3A.png}"></div>
+    <div id="zoom-3b" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto3B.png}"></div>
+    <div id="zoom-4a" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto4A.png}"></div>
+    <div id="zoom-4b" class="lightbox"><a href="#quartos" class="fechar">&times;</a><img th:src="@{/Quarto4b.png}"></div>
+
+
+    <!-- Formulário de Reserva Restaurado -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Faça sua reserva</h2>
+            <p class="text-center">Entre em contato conosco informando as datas desejadas. Lhe retornaremos informando a disponibilidade e repassando detalhes da reserva.</p>
+            
+                            <!-- Formulário conectado diretamente ao Spring Boot -->
+            <form th:action="@{/reservas/enviar}" th:object="${reserva}" method="POST">
+                
+                <!-- Alerta visual de sucesso que aparece quando salva no banco -->
+                <div th:if="${param.sucesso}" class="alert alert-success text-center fw-bold">
+                    Reserva gravada com sucesso no MySQL!
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nomeCliente" class="form-label">Nome</label>
+                        <input type="text" class="form-control" th:field="*{nomeCliente}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="emailCliente" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" th:field="*{emailCliente}" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="dataEntrada" class="form-label">Data de entrada</label>
+                        <input type="date" class="form-control" th:field="*{dataEntrada}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dataSaida" class="form-label">Data de saída</label>
+                        <input type="date" class="form-control" th:field="*{dataSaida}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="observacoes" class="form-label">Observações</label>
+                    <textarea class="form-control" th:field="*{observacoes}" rows="3"></textarea>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="qtdAdultos" class="form-label">Adultos</label>
+                        <input type="number" class="form-control" th:field="*{qtdAdultos}" min="1" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="qtdCriancas" class="form-label">Crianças</label>
+                        <input type="number" class="form-control" th:field="*{qtdCriancas}" min="0" required>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary px-5">Enviar Reserva</button>
+                </div>
+            </form>
+
+
+
+        </div>
+    </section>
+
+     <!-- Rodapé -->
+  <footer class="bg-dark text-white text-center p-3">
+    <p>&copy; 2026 Pousada da Dulci - Todos os direitos reservados</p>
+  </footer>
+
+  <!--Biblioteca Bootstrap -->
+  <script src="https://cloudflare.com"></script>
+  
+  <!--Script -->
+  <script th:src="@{/script.js}"></script>
+  
+<!-- Modal do Bootstrap para ampliar a imagem com o botão de X -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-transparent border-0">
+      <div class="modal-body text-center p-0 position-relative">
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+        <img id="modalImage" src="" class="img-fluid rounded" alt="Imagem ampliada">
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
