@@ -1,17 +1,14 @@
 package br.com.senacead.pousadaappjpa.gui;
 
-import br.com.senacead.pousadaappjpa.estrutura.Criptografia;
+import br.com.senacead.pousadaappjpa.utilitarios.Criptografia;
 import br.com.senacead.pousadaappjpa.persistencia.Usuario;
 import br.com.senacead.pousadaappjpa.dao.UsuarioDAO;
-import br.com.senacead.pousadaappjpa.Utilitaria.FuncService;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import javax.swing.JOptionPane;
-import pousadaapp.TelaInicio;
-import pousadaapp.TelaInicio2;
 
 /**
  *
@@ -19,8 +16,7 @@ import pousadaapp.TelaInicio2;
  */
 public class Login extends javax.swing.JFrame {
 
-    //Inicialização da classe FunService que chama os DAOs
-    FuncService func = new FuncService();
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     // Métod para exibeir a tela em FullSccreen
     public void setFullscreen() {
@@ -28,23 +24,23 @@ public class Login extends javax.swing.JFrame {
         setUndecorated(true); // Remove barra de título e bordas
         setVisible(true); // Torna visível
     }
-    
+
     // Método para mostrar mensagem rápida
-private void mostrarMensagemRapida(String mensagem) {
-    JOptionPane optionPane = new JOptionPane(mensagem, JOptionPane.INFORMATION_MESSAGE);
-    JDialog dialog = optionPane.createDialog("Mensagem");
-    dialog.setModal(false);
+    private void mostrarMensagemRapida(String mensagem) {
+        JOptionPane optionPane = new JOptionPane(mensagem, JOptionPane.INFORMATION_MESSAGE);
+        JDialog dialog = optionPane.createDialog("Mensagem");
+        dialog.setModal(false);
 
-    // centraliza no meio da tela
-    dialog.setLocationRelativeTo(null);
+        // centraliza no meio da tela
+        dialog.setLocationRelativeTo(null);
 
-    dialog.setVisible(true); // mostra a mensagem
+        dialog.setVisible(true); // mostra a mensagem
 
-    // fecha sozinho após 1.5 segundos
-    javax.swing.Timer timer = new javax.swing.Timer(1500, e -> dialog.dispose());
-    timer.setRepeats(false); // garante que só roda uma vez
-    timer.start();
-}
+        // fecha sozinho após 1.5 segundos
+        javax.swing.Timer timer = new javax.swing.Timer(1500, e -> dialog.dispose());
+        timer.setRepeats(false); // garante que só roda uma vez
+        timer.start();
+    }
 
     public void acessibilidade() {
         btnNovoUsuario.setMnemonic(KeyEvent.VK_N);
@@ -390,39 +386,27 @@ private void mostrarMensagemRapida(String mensagem) {
         String login = txtUsuario.getText();
         String senha = Criptografia.md5(new String(txtSenha.getPassword()));
 
-        Usuario usuarioLogado = func.autenticar(login, senha); // retorna o objeto Usuario
+// CORRIGIDO: Chamada direta ao método do DAO que busca por login e senha
+        Usuario usuarioLogado = usuarioDAO.buscarPorLoginESenha(login, senha);
 
         if (usuarioLogado != null) {
             String nome = usuarioLogado.getLogin();
-            String tipo = usuarioLogado.getTipo(); // "Administrador", "Operador" ou "Usuario"
+            String tipo = usuarioLogado.getTipo();
 
             JOptionPane.showMessageDialog(null,
                     "Olá " + nome + ", sua permissão é de " + tipo + ". Seja bem-vindo!");
 
-            if (usuarioLogado.getTipo().equalsIgnoreCase("Administrador") || usuarioLogado.getTipo().equalsIgnoreCase("Proprietaria")) {
-
-                System.out.println("Usuário retornado: " + (usuarioLogado != null ? usuarioLogado.getLogin() : "null"));
-                TelaInicio tela = new TelaInicio();
-                tela.setVisible(true);
-                txtUsuario.setText("");
-                txtSenha.setText("");
-            } else {
-                System.out.println("Usuário retornado: " + (usuarioLogado != null ? usuarioLogado.getLogin() : "null"));
-                TelaInicio2 tela2 = new TelaInicio2();
-                tela2.setVisible(true);
-                txtUsuario.setText("");
-                txtSenha.setText("");
-            }
+            // Mantido o envio do usuário logado para manter a nova validação de uma única TelaInicio
+            TelaInicio tela = new TelaInicio(usuarioLogado);
+            tela.setVisible(true);
 
         } else {
             JOptionPane.showMessageDialog(null, "Login ou senha inválidos.");
         }
 
-
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void btbSalvarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btbSalvarUsuarioActionPerformed
-
         Usuario novoUsuario = new Usuario();
         try {
 
@@ -444,8 +428,10 @@ private void mostrarMensagemRapida(String mensagem) {
                 novoUsuario.setSenha(Criptografia.md5(new String(senha)));
                 novoUsuario.setTipo(txtTipo.getText());
 
-                func.cadastrarUsuario(novoUsuario);
-                mostrarMensagemRapida("Usuário "+ novoUsuario.getNome()+" cadastrado como "+novoUsuario.getTipo());
+                // CORRIGIDO: Chamada direta ao DAO sem passar pelo FuncService
+                usuarioDAO.cadastrar(novoUsuario);
+
+                mostrarMensagemRapida("Usuário " + novoUsuario.getNome() + " cadastrado como " + novoUsuario.getTipo());
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Erro ao Cadastrar Usuario " + ex.getMessage());

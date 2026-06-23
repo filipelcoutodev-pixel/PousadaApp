@@ -1,4 +1,4 @@
-package pousadaapp;
+package br.com.senacead.pousadaappjpa.gui;
 
 import br.com.senacead.pousadaappjpa.gui.DadosHospede;
 
@@ -7,10 +7,12 @@ import br.com.senacead.pousadaappjpa.persistencia.Gastos;
 import br.com.senacead.pousadaappjpa.dao.GastosDAO;
 import br.com.senacead.pousadaappjpa.persistencia.Hospede;
 import br.com.senacead.pousadaappjpa.dao.HospedeDAO;
-import br.com.senacead.pousadaappjpa.estrutura.Relatorio;
-import br.com.senacead.pousadaappjpa.Utilitaria.FuncService;
+import br.com.senacead.pousadaappjpa.dao.QuartoDAO;
+import br.com.senacead.pousadaappjpa.utilitarios.Relatorio;
 import br.com.senacead.pousadaappjpa.gui.TelaReservas;
+import br.com.senacead.pousadaappjpa.persistencia.Caixa;
 import br.com.senacead.pousadaappjpa.persistencia.Quarto;
+import br.com.senacead.pousadaappjpa.persistencia.Usuario;
 import java.awt.Component;
 
 import java.awt.event.KeyEvent;
@@ -31,28 +33,29 @@ import javax.swing.table.TableColumnModel;
 
 public class TelaInicio extends javax.swing.JFrame {
 
-    //Inicialização da classe FunService que chama os DAOs
-    FuncService func = new FuncService();
-    HospedeDAO novoHospede = new HospedeDAO();
+    private HospedeDAO hospedeDAO = new HospedeDAO();
+    CaixaDAO caixaDAO = new CaixaDAO();
+    private GastosDAO gastoDAO = new GastosDAO();
+    private QuartoDAO quartoDAO = new QuartoDAO();
 
     double valorDiaria;
 
     // Método para mostrar mensagem rápida
-  private void mostrarMensagemRapida(String mensagem) {
-    JOptionPane optionPane = new JOptionPane(mensagem, JOptionPane.INFORMATION_MESSAGE);
-    JDialog dialog = optionPane.createDialog("Mensagem");
-    dialog.setModal(false);
+    private void mostrarMensagemRapida(String mensagem) {
+        JOptionPane optionPane = new JOptionPane(mensagem, JOptionPane.INFORMATION_MESSAGE);
+        JDialog dialog = optionPane.createDialog("Mensagem");
+        dialog.setModal(false);
 
-    // centraliza no meio da tela
-    dialog.setLocationRelativeTo(null);
+        // centraliza no meio da tela
+        dialog.setLocationRelativeTo(null);
 
-    dialog.setVisible(true); // mostra a mensagem
+        dialog.setVisible(true); // mostra a mensagem
 
-    // fecha sozinho após 1.5 segundos
-    javax.swing.Timer timer = new javax.swing.Timer(1500, e -> dialog.dispose());
-    timer.setRepeats(false); // garante que só roda uma vez
-    timer.start();
-}
+        // fecha sozinho após 1.5 segundos
+        javax.swing.Timer timer = new javax.swing.Timer(1500, e -> dialog.dispose());
+        timer.setRepeats(false); // garante que só roda uma vez
+        timer.start();
+    }
 
     // Atributo para pegar data atual Formatada
     private final String dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -155,15 +158,36 @@ public class TelaInicio extends javax.swing.JFrame {
         ajustarLarguraPorConteudo(tblGasto);
     }
 
-    public TelaInicio() {
+    // Construtor atualizado para receber o usuário que fez o login
+    public TelaInicio(Usuario usuarioLogado) {
         this.setFullscreen();
         initComponents();
 
-        // Preenche o combo de quartos
-        List<Quarto> quartos = func.listarQuartos();
+        // ----------------─────────────────────────────────────────────────────
+        // LOGICA DE RESTRICAO DE ACESSO (Onde o bloqueio acontece)
+        // ----------------─────────────────────────────────────────────────────
+        if (usuarioLogado != null) {
+            String tipo = usuarioLogado.getTipo().toLowerCase();
+
+            if (tipo.equals("proprietária") || tipo.equals("proprietário") || tipo.equals("administrador")) {
+                btnReservas.setEnabled(true);
+                btnCaixa.setEnabled(true);
+            } else {
+                btnReservas.setEnabled(false);
+                btnCaixa.setEnabled(false);
+            }
+        } else {
+            btnReservas.setEnabled(false);
+            btnCaixa.setEnabled(false);
+        }
+        // ----------------─────────────────────────────────────────────────────
+
+        // CORRIGIDO: Preenche o combo buscando os quartos diretamente pelo QuartoDAO
+        List<Quarto> quartos = quartoDAO.listarTodos();
         for (Quarto q : quartos) {
             cbxQuarto.addItem(q);
         }
+
         acessibilidade();
         btnAtualizaTabela.setVisible(false);
         btnConfirma.setVisible(false);
@@ -286,6 +310,11 @@ public class TelaInicio extends javax.swing.JFrame {
         Painelfundo.add(btnOk, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 100, 50, 30));
 
         txtEntraExclusao.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtEntraExclusao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEntraExclusaoActionPerformed(evt);
+            }
+        });
         Painelfundo.add(txtEntraExclusao, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 170, 30));
 
         btnOkExclui.setBackground(new java.awt.Color(0, 102, 153));
@@ -441,39 +470,38 @@ public class TelaInicio extends javax.swing.JFrame {
         PainelBotoesLayout.setHorizontalGroup(
             PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PainelBotoesLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(btnCdastro, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PainelBotoesLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCdastro, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(PainelBotoesLayout.createSequentialGroup()
-                        .addGap(439, 439, 439)
-                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         PainelBotoesLayout.setVerticalGroup(
             PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PainelBotoesLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnCdastro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(12, 12, 12)
-                .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        PainelMenu.add(PainelBotoes, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 540, 550, 110));
+        PainelMenu.add(PainelBotoes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 540, 570, -1));
 
         lblData.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lblData.setForeground(new java.awt.Color(0, 102, 153));
@@ -545,25 +573,29 @@ public class TelaInicio extends javax.swing.JFrame {
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(PainelCaixaLayout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(lblEntradas, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(130, 130, 130)
-                .addComponent(btnRelatorioCompleto, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(PainelCaixaLayout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(lblGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(130, 130, 130)
-                .addComponent(btnRelatorioResumido, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(PainelCaixaLayout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(lblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(210, 210, 210)
-                .addComponent(btnSairCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(PainelCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(PainelCaixaLayout.createSequentialGroup()
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(lblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PainelCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(PainelCaixaLayout.createSequentialGroup()
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(40, 40, 40)
+                            .addComponent(lblGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(PainelCaixaLayout.createSequentialGroup()
+                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(40, 40, 40)
+                            .addComponent(lblEntradas, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(PainelCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PainelCaixaLayout.createSequentialGroup()
+                        .addGap(91, 91, 91)
+                        .addGroup(PainelCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRelatorioCompleto, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRelatorioResumido, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(PainelCaixaLayout.createSequentialGroup()
+                        .addGap(171, 171, 171)
+                        .addComponent(btnSairCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         PainelCaixaLayout.setVerticalGroup(
             PainelCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -595,7 +627,7 @@ public class TelaInicio extends javax.swing.JFrame {
                             .addComponent(lblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
 
-        PainelMenu.add(PainelCaixa, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 215, 550, 170));
+        PainelMenu.add(PainelCaixa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 570, 170));
 
         PainelCadastro.setForeground(new java.awt.Color(0, 102, 153));
 
@@ -768,7 +800,7 @@ public class TelaInicio extends javax.swing.JFrame {
                             .addComponent(btnSairCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
 
-        PainelMenu.add(PainelCadastro, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 10, 550, 211));
+        PainelMenu.add(PainelCadastro, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 570, 211));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 102, 153));
@@ -831,31 +863,34 @@ public class TelaInicio extends javax.swing.JFrame {
         PainelGastosLayout.setHorizontalGroup(
             PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PainelGastosLayout.createSequentialGroup()
-                .addGap(241, 241, 241)
-                .addComponent(jLabel7))
-            .addGroup(PainelGastosLayout.createSequentialGroup()
-                .addGap(116, 116, 116)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(73, 73, 73)
-                .addComponent(jLabel5)
-                .addGap(139, 139, 139)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(PainelGastosLayout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(txtDataGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtDescGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtValorGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(PainelGastosLayout.createSequentialGroup()
-                .addGap(240, 240, 240)
-                .addComponent(btnSalvaGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23)
-                .addComponent(btnExcluirGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
-                .addComponent(btnSairGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(PainelGastosLayout.createSequentialGroup()
+                        .addComponent(btnSalvaGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnExcluirGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSairGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(PainelGastosLayout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(PainelGastosLayout.createSequentialGroup()
+                                .addGap(241, 241, 241)
+                                .addComponent(jLabel7))
+                            .addGroup(PainelGastosLayout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(92, 92, 92)
+                                .addComponent(jLabel5)
+                                .addGap(133, 133, 133)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(PainelGastosLayout.createSequentialGroup()
+                                .addComponent(txtDataGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtDescGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtValorGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         PainelGastosLayout.setVerticalGroup(
             PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -863,26 +898,28 @@ public class TelaInicio extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(jLabel7)
                 .addGap(6, 6, 6)
-                .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
+                .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel4))
                 .addGap(6, 6, 6)
                 .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(txtDataGasto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtDescGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtValorGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
+                .addGap(18, 18, 18)
                 .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnSalvaGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnExcluirGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSairGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(PainelGastosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSairGastos, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnExcluirGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
-        PainelMenu.add(PainelGastos, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 380, 550, 150));
+        PainelMenu.add(PainelGastos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 380, 570, 150));
 
-        getContentPane().add(PainelMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 170, 576, 650));
+        getContentPane().add(PainelMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 170, 590, 650));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -890,7 +927,7 @@ public class TelaInicio extends javax.swing.JFrame {
     private void btnSalvaGastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvaGastoActionPerformed
         Gastos gasto = new Gastos();
 
-        // Validação dos campos obrigatórios
+// Validação dos campos obrigatórios
         if (txtDescGastos.getText().isEmpty() || txtValorGastos.getText().isEmpty() || txtDataGasto.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Todos os Campos devem Ser Preenchidos");
             return;
@@ -917,8 +954,9 @@ public class TelaInicio extends javax.swing.JFrame {
         }
 
         try {
-
-            boolean gastocadastrado = func.cadastrarGasto(gasto);
+            // CORRIGIDO: Chama diretamente o método do GastosDAO
+            gastoDAO.cadastrarGasto(gasto);
+            boolean gastocadastrado = true; // Como o seu DAO retorna void/true internamente no service
 
             if (gastocadastrado) {
                 mostrarMensagemRapida("Gasto salvo com sucesso:\n" + gasto.getData() + " - " + gasto.getDescricao() + " - R$ " + gasto.getValor());
@@ -926,8 +964,9 @@ public class TelaInicio extends javax.swing.JFrame {
                 txtDataGasto.setText("");
                 txtDescGastos.setText("");
                 txtValorGastos.setText("");
-                //Atualiza a Tabela Gastos 
-                List<Gastos> listaGastos = func.listarGastos();
+
+                // CORRIGIDO: Lista os gastos diretamente pelo GastosDAO
+                List<Gastos> listaGastos = gastoDAO.listar();
                 carregarTabelaGastos(listaGastos);
 
                 atualizarPainelCaixa();
@@ -1022,7 +1061,7 @@ public class TelaInicio extends javax.swing.JFrame {
         }
         hospede.setContato(inContato);
 
-        // Seleção do quarto (objeto Quarto)
+// Seleção do quarto (objeto Quarto)
         Quarto quartoSelecionado = (Quarto) cbxQuarto.getSelectedItem();
 
         if (quartoSelecionado == null) {
@@ -1037,8 +1076,8 @@ public class TelaInicio extends javax.swing.JFrame {
 
             hospede.setSaldo(hospede.getNumeroDeDias() * valorDiaria);
 
-            // CHAMADA ÚNICA AO MÉTODO
-            boolean cadastrado = func.cadastrarHospede(hospede);
+            // CORRIGIDO: Chamada direta ao método de cadastro do HospedeDAO
+            boolean cadastrado = hospedeDAO.cadastrarHospede(hospede);
 
             if (cadastrado) {
                 mostrarMensagemRapida("Hospede " + hospede.getNome() + " acomodado no quarto " + quartoSelecionado.getIdentificacao());
@@ -1051,8 +1090,8 @@ public class TelaInicio extends javax.swing.JFrame {
                 txtNumeroDiarias.setText("");
                 txtNovoHospede.requestFocus();
 
-                // Atualiza tabela e painel
-                List<Hospede> lista = func.listarHospedes(null);
+                // CORRIGIDO: Busca a lista atualizada direto pelo método listar do HospedeDAO
+                List<Hospede> lista = hospedeDAO.listar(null);
                 atualizarTabelaHospede(lista);
                 atualizarPainelCaixa();
             } else {
@@ -1064,7 +1103,6 @@ public class TelaInicio extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Erro ao cadastrar hóspede: " + ex.getMessage());
         }
-
 
     }//GEN-LAST:event_btnSalvarHospedeActionPerformed
 
@@ -1187,7 +1225,9 @@ public class TelaInicio extends javax.swing.JFrame {
         } else {
 
             String nome = txtBusca.getText();
-            List<Hospede> resultado = func.listarHospedes(nome);
+
+            // CORRIGIDO: Busca os hóspedes filtrados pelo nome direto no HospedeDAO
+            List<Hospede> resultado = hospedeDAO.listar(nome);
             atualizarTabelaHospede(resultado);
 
             if (!resultado.isEmpty()) {
@@ -1198,12 +1238,11 @@ public class TelaInicio extends javax.swing.JFrame {
             }
             txtBusca.setText("");
         }
+
     }//GEN-LAST:event_btnOkActionPerformed
 
     private void btnRelatorioCompletoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRelatorioCompletoActionPerformed
 
-        HospedeDAO hospedeDAO = new HospedeDAO();
-        CaixaDAO caixaDAO = new CaixaDAO();
         Relatorio relatorio = new Relatorio();
         List<Hospede> listaHospedes = hospedeDAO.listar(""); // busca todos
         double entradas = caixaDAO.somarEntradas();
@@ -1219,7 +1258,7 @@ public class TelaInicio extends javax.swing.JFrame {
 
     private void btnExcluirGastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirGastoActionPerformed
 
-        JOptionPane.showMessageDialog(null, "Digite um ID e tecle OK para Excluir");
+        JOptionPane.showMessageDialog(null, "Digite um ID ou selecione uma linha \nE tecle OK para Excluir");
 
         txtEntraExclusao.setVisible(true);
         btnOkExclui.setVisible(true);
@@ -1234,24 +1273,60 @@ public class TelaInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExcluirGastoActionPerformed
 
     private void btnOkExcluiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkExcluiActionPerformed
+        int id = -1;
 
-        if (txtEntraExclusao.getText().isEmpty() && tblGasto.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Digite um ID para exclusão.");
+// 1. Verifica se o usuário digitou no campo de texto
+        if (!txtEntraExclusao.getText().isEmpty()) {
+            try {
+                id = Integer.parseInt(txtEntraExclusao.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "O ID digitado deve ser um número válido.");
+                return;
+            }
+        } // 2. Se não digitou, verifica se selecionou uma linha na tabela
+        else if (tblGasto.getSelectedRow() != -1) {
+            int linhaSelecionada = tblGasto.getSelectedRow();
+            id = Integer.parseInt(tblGasto.getValueAt(linhaSelecionada, 0).toString());
+        } // 3. Se não fez nenhum dos dois, barra a operação
+        else {
+            JOptionPane.showMessageDialog(null, "Digite um ID ou selecione uma linha na tabela para exclusão.");
             return;
         }
 
         try {
+            // Busca o gasto diretamente pelo ID unificado
+            Gastos gasto = gastoDAO.buscarPorId(id);
 
-            if (!txtEntraExclusao.getText().isEmpty()) {
-                int id = Integer.parseInt(txtEntraExclusao.getText());
+            if (gasto != null) {
+                // Deleta o gasto no banco de dados primeiro
+                gastoDAO.excluir(gasto);
 
-                func.excluirGasto(id);
+                // CORREÇÃO DE CONCORRÊNCIA: Recalcula o caixa atualizando os novos campos estruturados
+                Caixa caixa = caixaDAO.getCaixaAtual();
+
+                // Atualiza a estrutura de campos novos que você definiu
+                caixa.setGastos(caixa.getGastos() - gasto.getValor());
+                caixa.setSaldoTotal(caixa.getSaldoTotal() + gasto.getValor());
+
+                // Persiste as alterações direto no banco
+                caixaDAO.atualizarCaixa(caixa);
+
+                mostrarMensagemRapida("Gasto excluído e saldo estornado com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(null, "Gasto não encontrado com o ID informado.");
+                return;
             }
 
-            // Atualiza a tabela e limpa o campo
-            List<Gastos> listaGastos = func.listarGastos();
+            // Atualiza os dados na tela gráfica do usuário
+            List<Gastos> listaGastos = gastoDAO.listar();
             carregarTabelaGastos(listaGastos);
             txtEntraExclusao.setText("");
+
+            if (tblGasto.getSelectedRow() != -1) {
+                tblGasto.clearSelection(); // Limpa a seleção da tabela caso tenha sido usada
+            }
+
+            atualizarPainelCaixa();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,
@@ -1259,6 +1334,7 @@ public class TelaInicio extends javax.swing.JFrame {
                     "Erro", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
+
 
     }//GEN-LAST:event_btnOkExcluiActionPerformed
 
@@ -1293,7 +1369,6 @@ public class TelaInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_txtBuscaActionPerformed
 
     private void btnConfirmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmaActionPerformed
-
         int linhaSelecionada = tbllistaHospede.getSelectedRow();
 
         if (linhaSelecionada == -1) {
@@ -1304,15 +1379,14 @@ public class TelaInicio extends javax.swing.JFrame {
         int idHospede = Integer.parseInt(tbllistaHospede.getValueAt(linhaSelecionada, 0).toString());
 
         try {
-
-            boolean sucesso = func.excluirHospede(idHospede);
+            // CORRIGIDO: Chamada de exclusão direta pelo método do HospedeDAO
+            boolean sucesso = hospedeDAO.excluirHospedePorId(idHospede);
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(null, "Hóspede excluído com sucesso!");
-                //Chama a Tabela Hospede Atualizada
 
-                HospedeDAO hospededao = new HospedeDAO();
-                List<Hospede> lista = hospededao.listar(null);
+                // CORRIGIDO: Utiliza a mesma instância global do DAO para listar
+                List<Hospede> lista = hospedeDAO.listar(null);
                 atualizarTabelaHospede(lista);
             } else {
                 JOptionPane.showMessageDialog(null, "Hóspede não encontrado ou erro ao excluir.");
@@ -1332,8 +1406,7 @@ public class TelaInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfirmaActionPerformed
 
     private void btnRelatorioResumidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRelatorioResumidoActionPerformed
-        HospedeDAO hospedeDAO = new HospedeDAO();
-        CaixaDAO caixaDAO = new CaixaDAO();
+
         Relatorio relatorio = new Relatorio();
         List<Hospede> listaHospedes = hospedeDAO.listar(""); // busca todos
         double entradas = caixaDAO.somarEntradas();
@@ -1357,6 +1430,10 @@ public class TelaInicio extends javax.swing.JFrame {
         TelaReservas reservas = new TelaReservas();
         reservas.setVisible(true);
     }//GEN-LAST:event_btnReservasActionPerformed
+
+    private void txtEntraExclusaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntraExclusaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEntraExclusaoActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -1388,7 +1465,7 @@ public class TelaInicio extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaInicio().setVisible(true);
+
             }
         });
     }

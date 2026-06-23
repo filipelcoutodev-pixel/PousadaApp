@@ -1,6 +1,6 @@
 package br.com.senacead.pousadaappjpa.gui;
 
-import br.com.senacead.pousadaappjpa.Utilitaria.FuncService;
+import br.com.senacead.pousadaappjpa.dao.ReservaDAO;
 import br.com.senacead.pousadaappjpa.persistencia.Reserva;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -16,14 +16,14 @@ import javax.swing.table.DefaultTableModel;
  */
 public class TelaReservas extends javax.swing.JFrame {
 
-// Instancia o serviço unificado que criamos antes
-    private FuncService funcService = new FuncService();
+    private ReservaDAO reservaDAO = new ReservaDAO();
 
 // Modelo customizado para controlar as colunas da tabela
     private DefaultTableModel tableModel;
 
     public void atualizarTabelaReserva() {
-        List<Reserva> reservas = funcService.listarReservasWeb();
+        // CORRIGIDO: Busca a lista de reservas diretamente pelo método do ReservaDAO
+        List<Reserva> reservas = reservaDAO.listarTodas();
 
         // Se a lista vier nula, criamos uma lista vazia para o sistema não quebrar
         if (reservas == null) {
@@ -56,7 +56,6 @@ public class TelaReservas extends javax.swing.JFrame {
         };
 
         tblReservas.setModel(model);
-
     }
 
     public TelaReservas() {
@@ -191,19 +190,21 @@ public class TelaReservas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAprovarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAprovarActionPerformed
-int linhaSelecionada = tblReservas.getSelectedRow();
-        
+        int linhaSelecionada = tblReservas.getSelectedRow();
+
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Por favor, selecione uma reserva na tabela para aprovar.");
             return;
         }
-        
-        // CORREÇÃO AQUI: Pega o valor como Object, transforma em String e converte para Long de forma segura
+
+// CORREÇÃO AQUI: Pega o valor como Object, transforma em String e converte para Long de forma segura
         Object valorCelula = tblReservas.getValueAt(linhaSelecionada, 0);
         Long id = Long.parseLong(String.valueOf(valorCelula));
-        
+
         try {
-            funcService.aprovarReservaWeb(id);
+            // CORRIGIDO: Chamada direta ao método de aprovação do ReservaDAO
+            reservaDAO.aprovar(id);
+
             JOptionPane.showMessageDialog(this, "Reserva aprovada com sucesso!");
             atualizarTabelaReserva(); // Atualiza a tabela com o método vazio
         } catch (Exception e) {
@@ -214,21 +215,22 @@ int linhaSelecionada = tblReservas.getSelectedRow();
 
     private void btnDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeletarActionPerformed
         int linhaSelecionada = tblReservas.getSelectedRow();
-        
+
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Por favor, selecione uma reserva na tabela para deletar.");
             return;
         }
-        
+
         int resposta = JOptionPane.showConfirmDialog(this, "Deseja realmente deletar esta reserva?", "Confirmação", JOptionPane.YES_NO_OPTION);
-        
+
         if (resposta == JOptionPane.YES_OPTION) {
             // CORREÇÃO AQUI: Pega o valor como Object, transforma em String e converte para Long de forma segura
             Object valorCelula = tblReservas.getValueAt(linhaSelecionada, 0);
             Long id = Long.parseLong(String.valueOf(valorCelula));
-            
-            boolean excluiu = funcService.excluirReservaWeb(id);
-            
+
+            // CORRIGIDO: Chamada direta ao método de exclusão do ReservaDAO
+            boolean excluiu = reservaDAO.excluir(id);
+
             if (excluiu) {
                 JOptionPane.showMessageDialog(this, "Reserva excluída do sistema!");
                 atualizarTabelaReserva(); // Atualiza a tabela com o método vazio
@@ -236,6 +238,7 @@ int linhaSelecionada = tblReservas.getSelectedRow();
                 JOptionPane.showMessageDialog(this, "Não foi possível excluir a reserva.");
             }
         }
+
     }//GEN-LAST:event_btnDeletarActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed

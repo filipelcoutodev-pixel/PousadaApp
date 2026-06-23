@@ -2,7 +2,7 @@
 package br.com.senacead.pousadaappjpa.dao;
 
 import br.com.senacead.pousadaappjpa.persistencia.Caixa;
-import br.com.senacead.pousadaappjpa.Utilitaria.JPAUtil;
+import br.com.senacead.pousadaappjpa.utilitarios.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;

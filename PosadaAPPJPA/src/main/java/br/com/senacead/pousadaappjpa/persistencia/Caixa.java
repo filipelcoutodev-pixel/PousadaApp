@@ -1,10 +1,19 @@
 package br.com.senacead.pousadaappjpa.persistencia;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+
+@Entity
+@Table(name = "caixa") // Nome da tabela no banco MySQL
 public class Caixa {
-
     
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    private int id;
     private double entradas;
     private double gastos;
     private double saldoTotal;

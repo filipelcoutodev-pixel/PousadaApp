@@ -4,7 +4,7 @@
  */
 package br.com.senacead.pousadaappjpa.dao;
 
-import br.com.senacead.pousadaappjpa.Utilitaria.JPAUtil;
+import br.com.senacead.pousadaappjpa.utilitarios.JPAUtil;
 import br.com.senacead.pousadaappjpa.persistencia.Quarto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;

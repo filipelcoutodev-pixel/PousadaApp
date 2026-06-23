@@ -5,7 +5,7 @@
 package br.com.senacead.pousadaappjpa.gui;
 
 import br.com.senacead.pousadaappjpa.persistencia.Hospede;
-import pousadaapp.TelaInicio;
+
 
 /**
  *
