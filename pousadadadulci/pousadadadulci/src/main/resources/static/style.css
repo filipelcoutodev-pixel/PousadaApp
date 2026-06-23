@@ -7,7 +7,7 @@ header {
 header img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 200px;
   margin: 0;
   padding: 0;
 }
@@ -29,13 +29,13 @@ body {
 }
 
 /* Botões */
-.btn-primary {
-  background-color: #2F5D50; /* Verde escuro direto */
+.btnConhecer {
+  background-color: #2F5D50;
   border-color: #2F5D50;
 }
 
-.btn-primary:hover {
-  background-color: #A8D5BA; /* Verde claro direto no hover */
+.btnConhecer:hover {
+  background-color: #A8D5BA; 
   border-color: #A8D5BA;
   color: #2F5D50;
 }

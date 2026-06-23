@@ -20,12 +20,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 
 // 3. IMPORTANTE: Adicionados os imports das ferramentas do Lombok
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+
+
 
 // 4. IMPORTANTE: Adicionado o import de data do Java
 import java.time.LocalDate;
+import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -37,85 +41,64 @@ public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @NotBlank(message = "O nome do cliente é obrigatório.")
-    @Column(name = "nome_cliente", nullable = false, length = 150)
-    private String nomeCliente;
-
-    @NotBlank(message = "O e-mail é obrigatório.")
-    @Email(message = "Insira um e-mail válido.")
-    @Column(name = "email_cliente", nullable = false, length = 100)
-    private String emailCliente;
-
-    @NotNull(message = "A data de entrada é obrigatória.")
-    @Column(name = "data_entrada", nullable = false)
-    private LocalDate dataEntrada;
-
-    @NotNull(message = "A data de saída é obrigatória.")
-    @Column(name = "data_saida", nullable = false)
-    private LocalDate dataSaida;
-
-    @Column(name = "observacoes", columnDefinition = "TEXT")
+    private Long id;
+    
+    private String nome_cliente;
+    private String email_Cliente;
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // Evita erro de conversão HTML -> Java
+    private Date data_entrada;
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // Evita erro de conversão HTML -> Java
+    private Date data_saida;
+    
     private String observacoes;
-
-    @NotNull(message = "A quantidade de adultos deve ser informada.")
-    @Min(value = 1, message = "A reserva deve ter pelo menos 1 adulto.")
-    @Column(name = "qtd_adultos", nullable = false)
-    private Integer qtdAdultos;
-
-    @NotNull(message = "A quantidade de crianças deve ser informada.")
-    @Min(value = 0, message = "A quantidade de crianças não pode ser negativa.")
-    @Column(name = "qtd_criancas", nullable = false)
-    private Integer qtdCriancas;
-
-    @NotBlank(message = "O status da reserva é obrigatório.")
-    @Column(name = "status", nullable = false, length = 30)
-    private String status = "PENDENTE"; // Inicia automaticamente como pendente para aprovação
+    private int qtd_adultos;
+    private int qtd_criancas;
+    private String status = "PENDENTE";
+    private String usuario_login; 
 
     public Reserva() {
     }
-    
-    // Getters e Setters manuais para evitar falhas de compilação
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getNomeCliente() {
-        return nomeCliente;
+    public String getNome_cliente() {
+        return nome_cliente;
     }
 
-    public void setNomeCliente(String nomeCliente) {
-        this.nomeCliente = nomeCliente;
+    public void setNome_cliente(String nome_cliente) {
+        this.nome_cliente = nome_cliente;
     }
 
-    public String getEmailCliente() {
-        return emailCliente;
+    public String getEmail_Cliente() {
+        return email_Cliente;
     }
 
-    public void setEmailCliente(String emailCliente) {
-        this.emailCliente = emailCliente;
+    public void setEmail_Cliente(String email_Cliente) {
+        this.email_Cliente = email_Cliente;
     }
 
-    public LocalDate getDataEntrada() {
-        return dataEntrada;
+    public Date getData_entrada() {
+        return data_entrada;
     }
 
-    public void setDataEntrada(LocalDate dataEntrada) {
-        this.dataEntrada = dataEntrada;
+    public void setData_entrada(Date data_entrada) {
+        this.data_entrada = data_entrada;
     }
 
-    public LocalDate getDataSaida() {
-        return dataSaida;
+    public Date getData_saida() {
+        return data_saida;
     }
 
-    public void setDataSaida(LocalDate dataSaida) {
-        this.dataSaida = dataSaida;
+    public void setData_saida(Date data_saida) {
+        this.data_saida = data_saida;
     }
 
     public String getObservacoes() {
@@ -126,20 +109,20 @@ public class Reserva {
         this.observacoes = observacoes;
     }
 
-    public Integer getQtdAdultos() {
-        return qtdAdultos;
+    public int getQtd_adultos() {
+        return qtd_adultos;
     }
 
-    public void setQtdAdultos(Integer qtdAdultos) {
-        this.qtdAdultos = qtdAdultos;
+    public void setQtd_adultos(int qtd_adultos) {
+        this.qtd_adultos = qtd_adultos;
     }
 
-    public Integer getQtdCriancas() {
-        return qtdCriancas;
+    public int getQtd_criancas() {
+        return qtd_criancas;
     }
 
-    public void setQtdCriancas(Integer qtdCriancas) {
-        this.qtdCriancas = qtdCriancas;
+    public void setQtd_criancas(int qtd_criancas) {
+        this.qtd_criancas = qtd_criancas;
     }
 
     public String getStatus() {
@@ -149,5 +132,14 @@ public class Reserva {
     public void setStatus(String status) {
         this.status = status;
     }
-   
+
+    public String getUsuario_login() {
+        return usuario_login;
+    }
+
+    public void setUsuario_login(String usuario_login) {
+        this.usuario_login = usuario_login;
+    }
+    
+    
 }
